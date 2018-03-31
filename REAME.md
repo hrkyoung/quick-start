@@ -1,5 +1,5 @@
 # Quick-start
-Create a short alias for long commands. I made it to shorten long commands with a series of arguments or access directory-dependent scripts anywhere. 
+Create an alias for long commands. I made it to shorten long commands with a series of arguments or access directory-dependent scripts anywhere. 
 
 ### Installation
 - clone or make a copy of the quick script
