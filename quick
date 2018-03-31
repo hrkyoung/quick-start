@@ -68,7 +68,7 @@ run(){
 
 	cmd=$(grep -P "\w*(?<!#)$1=" "$config")
 	if [ -z "$cmd" ]; then
-		echo "Command not found. Use quick ls for a list of available command."
+		echo "Command not found. Use quick ls for a list of available options."
 		exit 1;
 	fi
 	tmp_cmd="${cmd#$1=*}"
