@@ -18,6 +18,8 @@ Create a shorter alias for long commands. I made it to shorten long commands wit
 ```
 ### Use
 ```
+quick help
+
 Quick Start v0.1.0
 Command list:
 ------------------
