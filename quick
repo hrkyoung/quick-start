@@ -1,0 +1,123 @@
+#!/bin/bash
+# 
+# Creates an alias for any command or script
+# @author hrkyoung iam@hrkyoung.com
+# @version 0.1.0
+#
+version="0.1.0"
+config=~/.quick
+if [ ! -f $config ]; then
+	touch ~/.quick
+fi
+
+add(){
+	if grep -Fq "$1=" "$config" ;then 
+		echo "Option name is in use. Select another."
+	else
+		echo "$1=$2" >> "$config"
+	fi
+}
+
+list(){
+
+	echo "Quick Options available"
+	echo "-----------------------"
+	while IFS= read -r line; do
+	    tmp="${line%=*}"
+	    echo "$tmp"
+	done < "$config"
+	echo -e "\nOptions beginning in # are disabled. Enable them with quick enable option_name."
+
+}
+
+delete(){
+	sed -i "/$1=/d" "$config"
+}
+
+disable(){
+	sed -i "/$1/s/^/#/" "$config"
+}
+enable(){
+	sed -i 's/^#//' "$config"
+}
+
+selfInstall(){
+	if [ -z "$1" ]; then
+		echo "This will overwrite any quick files named quick in usr/local/bin and set quick's file permission to 755. Continue? y/n:"
+		read answer
+		output="/usr/local/bin/quick"
+		if [ "$answer" == "y" ]; then
+			cp -rf "$0" "$output"
+			chmod 755 "$output"
+			echo "Success!"
+		else
+			echo "Aborting..."
+		fi
+	else
+		 cp "$0" "$1"	
+		 echo "$1" 
+	fi
+
+	
+}
+run(){
+	if [ -z "$1" ]; then
+		echo "quick-start equires one argument. Use quick ls for a list of available options or quick help to list all commands."
+		exit 1
+	fi 
+
+	cmd=$(grep -P "\w*(?<!#)$1=" "$config")
+	if [ -z "$cmd" ]; then
+		echo "Command not found. Use quick ls for a list of available command."
+		exit 1;
+	fi
+	tmp_cmd="${cmd#$1=*}"
+	eval "$tmp_cmd"
+}
+
+explain(){
+	cmd=$(grep -P "\w*(?<!#)$1=" "$config")
+	cmd_definition="${cmd#$1=*}"
+	echo "$cmd_definition"
+}
+
+help(){
+	echo "Quick Start v$version"
+	echo "Command list: "
+	echo "------------------"
+	echo "add option_name bash_command"
+	echo "rm option_name"
+	echo "disable option_name"
+	echo "enable option_name"
+	echo "install install_path"
+	echo "explain option_name"
+}
+case "$1" in
+	"add")
+		add "$2" "$3"
+		;;
+	"rm")
+		delete "$2"
+		;;
+	"ls")
+		list
+		;;
+	"disable")
+		disable "$2"
+		;;
+	"enable")
+		enable "$2"
+		;;
+	"install")
+		selfInstall "$2"
+		;;
+	"explain")
+		explain "$2"
+		;;
+	"help")
+		help
+		;;
+	*)
+		run "$1"
+		;;
+esac
